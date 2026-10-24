@@ -34,3 +34,92 @@ h1{font-size:20px;margin:4px 0 10px;color:var(--pr);text-align:center}
 .h{text-align:center;font-size:12px;color:var(--mu);padding:4px 0}
 .h.f{color:var(--fr)}
 .c{border:1px solid var(--bd);border-radius:10px;min-height:58px;padding:3px 0;text-align:center;background:transparent;color:var(--tx);font-family:inherit;displa
+   .c .e{font-size:15px;font-weight:600}
+.c .b{font-size:10px;color:var(--pr)}
+.c .a{font-size:10px;color:var(--ac)}
+.c.f .e{color:var(--fr)}
+.c.t{background:var(--tb);border-color:var(--pr)}
+.c.s{outline:2px solid var(--ac)}
+.c.x{visibility:hidden}
+.set{display:flex;align-items:center;justify-content:space-between;font-size:13px;gap:8px;flex-wrap:wrap}
+.set select,.set button{font-family:inherit;font-size:13px;padding:6px 8px;border-radius:8px;border:1px solid var(--bd);background:var(--card);color:var(--tx)}
+.foot{text-align:center;font-size:11px;color:var(--mu);margin:6px 0 14px}
+</style>
+</head>
+<body>
+<h1>🌙 চৌধুরী ক্যালেন্ডার</h1>
+<div class="card big" id="today"></div>
+<div class="card">
+  <div class="nav"><button id="pv" aria-label="আগের মাস">‹</button><div class="t" id="ttl"></div><button id="nx" aria-label="পরের মাস">›</button></div>
+  <div class="grid" id="g"></div>
+</div>
+<div class="card set">
+  <span>হিজরি তারিখ সমন্বয় (চাঁদ দেখা অনুযায়ী):</span>
+  <select id="off"><option value="-2">−২ দিন</option><option value="-1">−১ দিন (বাংলাদেশ)</option><option value="0">সৌদি অনুযায়ী</option><option value="1">+১ দিন</option></select>
+  <button id="td">আজকে যাও</button>
+</div>
+<div class="foot">ইন্টারনেট ছাড়াও চলে • তারিখ ডিভাইসের ঘড়ি থেকে নিজে নিজে আপডেট হয়</div>
+<script>
+const BD='০১২৩৪৫৬৭৮৯',bn=n=>String(n).replace(/\d/g,d=>BD[d]);
+const EM=['জানুয়ারি','ফেব্রুয়ারি','মার্চ','এপ্রিল','মে','জুন','জুলাই','আগস্ট','সেপ্টেম্বর','অক্টোবর','নভেম্বর','ডিসেম্বর'];
+const BM=['বৈশাখ','জ্যৈষ্ঠ','আষাঢ়','শ্রাবণ','ভাদ্র','আশ্বিন','কার্তিক','অগ্রহায়ণ','পৌষ','মাঘ','ফাল্গুন','চৈত্র'];
+const HM=['মুহাররম','সফর','রবিউল আউয়াল','রবিউস সানি','জমাদিউল আউয়াল','জমাদিউস সানি','রজব','শাবান','রমজান','শাওয়াল','জিলকদ','জিলহজ'];
+const WD=['রবি','সোম','মঙ্গল','বুধ','বৃহ','শুক্র','শনি'];
+const WF=['রবিবার','সোমবার','মঙ্গলবার','বুধবার','বৃহস্পতিবার','শুক্রবার','শনিবার'];
+let off=-1;
+try{const v=localStorage.getItem('cc_off');if(v!==null)off=parseInt(v)||0}catch(e){}
+const leap=y=>(y%4==0&&y%100!=0)||y%400==0;
+function bangla(y,m,d){
+  const t=Date.UTC(y,m,d);let by=y-593,st=Date.UTC(y,3,14);
+  if(t<st){by=y-594;st=Date.UTC(y-1,3,14)}
+  let n=Math.round((t-st)/864e5);
+  const L=[31,31,31,31,31,30,30,30,30,30,leap(by+594)?30:29,30];
+  let i=0;while(n>=L[i]){n-=L[i];i++}
+  return{d:n+1,m:i,y:by}
+}
+let fmt;
+try{fmt=new Intl.DateTimeFormat('en-u-ca-islamic-umalqura-nu-latn',{day:'numeric',month:'numeric',year:'numeric'})}catch(e){fmt=null}
+function hijri(y,m,d){
+  if(!fmt)return{d:0,m:0,y:0};
+  const p={};fmt.formatToParts(new Date(y,m,d+off,12)).forEach(x=>p[x.type]=x.value);
+  return{d:+p.day,m:+p.month-1,y:parseInt(p.year)}
+}
+const info=(y,m,d)=>({b:bangla(y,m,d),h:hijri(y,m,d)});
+const now=new Date();let cy=now.getFullYear(),cm=now.getMonth();
+let sel={y:cy,m:cm,d:now.getDate()};
+const $=id=>document.getElementById(id);
+function tri(y,m,d){
+  const i=info(y,m,d);
+  return `<div><small>ইংরেজি</small><b>${bn(d)}</b>${EM[m]} ${bn(y)}</div>
+  <div><small>বাংলা</small><b>${bn(i.b.d)}</b>${BM[i.b.m]} ${bn(i.b.y)}</div>
+  <div><small>হিজরি</small><b>${bn(i.h.d)}</b>${HM[i.h.m]} ${bn(i.h.y)}</div>`
+}
+function draw(){
+  const wd=new Date(sel.y,sel.m,sel.d).getDay();
+  $('today').innerHTML=`<div class="wd">${WF[wd]}</div><div class="row">${tri(sel.y,sel.m,sel.d)}</div>`;
+  const first=new Date(cy,cm,1).getDay(),dim=new Date(cy,cm+1,0).getDate();
+  const a=info(cy,cm,1),z=info(cy,cm,dim);
+  const rng=(arr,x,y)=>x.m==y.m?arr[x.m]:arr[x.m]+' – '+arr[y.m];
+  $('ttl').innerHTML=`<b>${EM[cm]} ${bn(cy)}</b><div>${rng(BM,a.b,z.b)} ${bn(z.b.y)} বঙ্গাব্দ</div><div>${rng(HM,a.h,z.h)} ${bn(z.h.y)} হিজরি</div>`;
+  let h=WD.map((w,i)=>`<div class="h${i==5?' f':''}">${w}</div>`).join('');
+  for(let i=0;i<first;i++)h+='<div class="c x"></div>';
+  for(let d=1;d<=dim;d++){
+    const i=info(cy,cm,d),col=(first+d-1)%7;
+    let c='c';if(col==5)c+=' f';
+    if(cy==now.getFullYear()&&cm==now.getMonth()&&d==now.getDate())c+=' t';
+    if(sel.y==cy&&sel.m==cm&&sel.d==d)c+=' s';
+    h+=`<button class="${c}" data-d="${d}"><span class="e">${bn(d)}</span><span class="b">${bn(i.b.d)}${i.b.d==1?' '+BM[i.b.m]:''}</span><span class="a">${bn(i.h.d)}${i.h.d==1?' '+HM[i.h.m]:''}</span></button>`
+  }
+  $('g').innerHTML=h;
+}
+$('g').onclick=e=>{const b=e.target.closest('[data-d]');if(b){sel={y:cy,m:cm,d:+b.dataset.d};draw()}};
+$('pv').onclick=()=>{cm--;if(cm<0){cm=11;cy--}draw()};
+$('nx').onclick=()=>{cm++;if(cm>11){cm=0;cy++}draw()};
+$('td').onclick=()=>{cy=now.getFullYear();cm=now.getMonth();sel={y:cy,m:cm,d:now.getDate()};draw()};
+$('off').value=String(off);
+$('off').onchange=e=>{off=parseInt(e.target.value);try{localStorage.setItem('cc_off',off)}catch(x){}draw()};
+draw();
+if("serviceWorker" in navigator){navigator.serviceWorker.register("sw.js").catch(function(){})}
+</script>
+</body>
+</html>
