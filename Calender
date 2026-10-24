@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>চৌধুরী ক্যালেন্ডার</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f6b4a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="apple-touch-icon" href="icon-192.png">
+<link rel="icon" href="icon-192.png">
+<style>
+:root{--bg:#f4f8f5;--card:#fff;--tx:#1b2b22;--mu:#6b7d72;--pr:#0f6b4a;--ac:#c58a1a;--fr:#c0392b;--bd:#dbe6df;--tb:#e3f2ea;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a14;--card:#17261d;--tx:#e8f1ec;--mu:#93a89b;--pr:#3fbf8c;--ac:#e0b04a;--fr:#ff7b6b;--bd:#27392e;--tb:#1d3226;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1a14;--card:#17261d;--tx:#e8f1ec;--mu:#93a89b;--pr:#3fbf8c;--ac:#e0b04a;--fr:#ff7b6b;--bd:#27392e;--tb:#1d3226;color-scheme:dark}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font-family:"Noto Sans Bengali","Kalpurush","SolaimanLipi",system-ui,sans-serif;max-width:520px;margin:0 auto;padding:12px}
+h1{font-size:20px;margin:4px 0 10px;color:var(--pr);text-align:center}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;margin-bottom:12px}
+.big{text-align:center}
+.big .wd{color:var(--mu);font-size:14px}
+.row{display:flex;justify-content:space-between;gap:8px;margin-top:8px}
+.row div{flex:1;background:var(--tb);border-radius:12px;padding:8px 4px;text-align:center;font-size:13px}
+.row b{display:block;font-size:20px;color:var(--pr)}
+.row small{color:var(--mu)}
+.nav{display:flex;align-items:center;justify-content:space-between}
+.nav button{background:var(--tb);color:var(--pr);border:0;border-radius:10px;width:40px;height:40px;font-size:18px}
+.nav .t{text-align:center}
+.nav .t b{font-size:17px}
+.nav .t div{font-size:12px;color:var(--mu)}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-top:10px}
+.h{text-align:center;font-size:12px;color:var(--mu);padding:4px 0}
+.h.f{color:var(--fr)}
+.c{border:1px solid var(--bd);border-radius:10px;min-height:58px;padding:3px 0;text-align:center;background:transparent;color:var(--tx);font-family:inherit;displa
